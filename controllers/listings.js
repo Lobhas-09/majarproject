@@ -1,0 +1,208 @@
+const Listing = require("../models/listing")
+
+const maptilerClient = require("@maptiler/client");
+
+maptilerClient.config.apiKey = 'AFkjcVXlvq01IiFF0LnL';
+
+
+// in an async function, or as a 'thenable':
+
+// in an async function, or as a 'thenable':
+
+module.exports.index = async (req, res) => {
+  const allListings = await Listing.find({});
+  res.render("listings/index.ejs", {
+    allListings,
+    maptilerKey: process.env.MAPTILER_API_KEY,
+    searchQuery: null,
+    activeCategory: null,
+  });
+};
+
+module.exports.renderNewForm = (req, res) => {
+  res.render("listings/new.ejs", {
+    maptilerKey: process.env.MAPTILER_API_KEY,
+  });
+}
+
+module.exports.ShowListings = async (req, res) => {
+  let { id } = req.params;
+  id = id.trim();
+  const listing = await Listing.findById(id)
+    .populate({
+      path: "reviews"
+      , populate: {
+        path: "author",
+      }
+    }).populate("owner");
+  if (!listing) {
+    req.flash("error", "Listing does not exist");
+    return res.redirect("/listings");  // ✅ return stops execution here
+  }
+
+  // ✅ Only ONE res.render at the end
+  return res.render("listings/show.ejs", {
+    listing,
+    maptilerKey: process.env.MAPTILER_API_KEY,
+  });
+};
+// module.exports.CreateListings = async (req, res,next) => {
+
+
+// const gc = new GeocodingControl({
+//   collapsed: true,
+//   country: 'de',
+//   limit: 10
+// });
+
+//   let url = req.file.path;
+//   let filename = req.file.filename;
+
+
+//   const newListing = new Listing(req.body.listing); // cannot throw now
+
+//    newListing.owner = req.user._id;
+
+//    newListing.image = { url , filename }
+//   await newListing.save();
+//   req.flash("success" , "New Listings Created")
+//   res.redirect('/listings');
+// }
+module.exports.CreateListings = async (req, res, next) => {
+  try {
+    // Ensure categories is always an array
+    if (!req.body.listing.categories) {
+      req.body.listing.categories = [];
+    } else if (typeof req.body.listing.categories === "string") {
+      req.body.listing.categories = [req.body.listing.categories];
+    }
+
+    const location = req.body.listing.location;
+
+    const geoData = await maptilerClient.geocoding.forward(location, {
+      limit: 1,
+      language: ["en"],
+    });
+
+    // ✅ Check if geocoding returned results
+    if (!geoData.features.length) {
+      req.flash("error", "Location not found, please try again");
+      return res.redirect("/listings/new");  // ✅ return stops here
+    }
+
+    const coordinates = geoData.features[0].geometry.coordinates;
+
+    let url = req.file.path;
+    let filename = req.file.filename;
+
+    const newListing = new Listing(req.body.listing);
+    newListing.owner = req.user._id;
+    newListing.image = { url, filename };
+    newListing.geometry = {
+      type: "Point",
+      coordinates: coordinates,
+    };
+
+    await newListing.save();
+    req.flash("success", "New Listing Created");
+    return res.redirect("/listings");  // ✅ return stops here
+
+  } catch (err) {
+    next(err);  // ✅ Pass error to error handler, don't res.render here
+  }
+};
+module.exports.EditListings = async (req, res) => {
+  let { id } = req.params;
+  const listing = await Listing.findById(id);
+  //  if(!listing){
+  //       req.flash("error", "Listings you requested for does not exist")
+  //      return  res.redirect("/listings")
+  // }
+
+
+  let originalImageUrl = listing.image.url;
+  originalImageUrl = originalImageUrl.replace("/upload", "/upload/h_300,w_250")
+  res.render("listings/edit.ejs", { listing, originalImageUrl });
+}
+
+module.exports.UpdateListings = (async (req, res) => {
+
+
+  let { id } = req.params;
+
+  // Ensure categories is always an array
+  if (!req.body.listing.categories) {
+    req.body.listing.categories = [];
+  } else if (typeof req.body.listing.categories === "string") {
+    req.body.listing.categories = [req.body.listing.categories];
+  }
+
+  let Listings = await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+
+  if (typeof req.file !== "undefined") {
+
+    let url = req.file.path;
+    let filename = req.file.filename;
+    Listings.image = { url, filename }
+    await Listings.save()
+
+  }
+
+
+
+  req.flash("success", " Listings Updated")
+  res.redirect(`/listings/${id}`);
+})
+
+module.exports.destroyListings = async (req, res) => {
+  let { id } = req.params;
+  let deletedListings = await Listing.findByIdAndDelete(id);
+  console.log(deletedListings);
+
+  req.flash("success", " Listings Deleted")
+  res.redirect("/listings");
+
+}
+
+module.exports.search = async (req, res) => {
+  const q = req.query.q ? req.query.q.trim() : "";
+  if (!q) {
+    req.flash("error", "Please enter a search term");
+    return res.redirect("/listings");
+  }
+  const regex = new RegExp(q, "i");
+  const allListings = await Listing.find({
+    $or: [
+      { title: regex },
+      { location: regex },
+      { country: regex },
+      { categories: regex },
+    ],
+  });
+  if (allListings.length === 0) {
+    req.flash("error", "This data is not in the list");
+    return res.redirect("/listings");
+  }
+  res.render("listings/index.ejs", {
+    allListings,
+    maptilerKey: process.env.MAPTILER_API_KEY,
+    searchQuery: q,
+    activeCategory: null,
+  });
+};
+
+module.exports.filterByCategory = async (req, res) => {
+  const { category } = req.params;
+  const regex = new RegExp(category, "i");
+  const allListings = await Listing.find({ categories: { $in: [regex] } });
+  if (allListings.length === 0) {
+    req.flash("error", "This data is not in the list");
+    return res.redirect("/listings");
+  }
+  res.render("listings/index.ejs", {
+    allListings,
+    maptilerKey: process.env.MAPTILER_API_KEY,
+    searchQuery: null,
+    activeCategory: category,
+  });
+};

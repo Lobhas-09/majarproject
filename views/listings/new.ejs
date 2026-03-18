@@ -1,0 +1,171 @@
+<% layout("/layouts/boilerplate") %>
+    <div class="row mt-3">
+        <div class="col-8 offset-2">
+
+
+            <body>
+                <br><br>
+                <h1>CREATE A NEW LISTINGS</h1>
+                <form action="/listings" method="POST" novalidate class="needs-validation"
+                    enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="title" class="form-lable">Title</label>
+                        <input name="listing[title]" placeholder="enter your title" type="text" class="form-control"
+                            required>
+                        <div class="valid-feedback">TITLE IS LOOKS GOOD!</div>
+                        <div class="invalid-feedback">Please Enter a title</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="description" class="form-lable">description</label>
+                        <textarea name="listing[description]" placeholder="enter your description" type="text" rows="5"
+                            cols="20" class="form-control" required></textarea>
+                        <div class="invalid-feedback">Please Write a short discription</div>
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label for="image" class="form-lable">Upload your hotel image</label>
+                        <input name="listing[image]" type="file" class="form-control">
+                        <div class="invalid-feedback">Insert a beautiful image</div>
+                    </div>
+
+                    <div class="row">
+
+                        <div class="mb-3 col-md-4">
+                            <label for="price" class="form-lable">price</label>
+                            <input name="listing[price]" placeholder="enter your Price" class="form-control" required>
+                            <div class="invalid-feedback">Enter a proper price</div>
+                        </div>
+
+
+                        <div class="mb-3 col-md-8">
+                            <label for="country" class="form-lable">country</label>
+                            <input name="listing[country]" placeholder="enter your contry name" type="text"
+                                class="form-control" required>
+                            <div class="invalid-feedback">Please Enter a Correct Country</div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="location" class="form-lable">location</label>
+                        <input name="listing[location]" id="location-input" placeholder="enter your location"
+                            type="text" class="form-control" required>
+                        <div class="invalid-feedback">Please Enter a Correct Location</div>
+                    </div>
+
+                    <!-- Live Map Preview -->
+                    <div class="mb-3">
+                        <label class="form-lable">📍 Location Preview</label>
+                        <div id="map" style="height:350px; border-radius:10px; border:1px solid #ddd;"></div>
+                        <small id="map-status" class="text-muted">Enter a location above to see it on the map</small>
+                    </div>
+
+                    <!-- Categories Checkboxes -->
+                    <div class="mb-3">
+                        <label class="form-label"><strong>Categories</strong></label>
+                        <div class="d-flex flex-wrap gap-3">
+                            <div class="form-check">
+                                <input type="checkbox" name="listing[categories]" value="Trending"
+                                    class="form-check-input" id="cat-trending">
+                                <label class="form-check-label" for="cat-trending"><i
+                                        class="fa-solid fa-fire-flame-curved"></i> Trending</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" name="listing[categories]" value="Rooms" class="form-check-input"
+                                    id="cat-rooms">
+                                <label class="form-check-label" for="cat-rooms"><i class="fa-solid fa-bed"></i>
+                                    Rooms</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" name="listing[categories]" value="Iconic Cities"
+                                    class="form-check-input" id="cat-cities">
+                                <label class="form-check-label" for="cat-cities"><i class="fa-solid fa-city"></i> Iconic
+                                    Cities</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" name="listing[categories]" value="Mountain"
+                                    class="form-check-input" id="cat-mountain">
+                                <label class="form-check-label" for="cat-mountain"><i
+                                        class="fa-solid fa-mountain-city"></i> Mountain</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" name="listing[categories]" value="Castles"
+                                    class="form-check-input" id="cat-castles">
+                                <label class="form-check-label" for="cat-castles"><i
+                                        class="fa-brands fa-fort-awesome"></i> Castles</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" name="listing[categories]" value="Amazing Pools"
+                                    class="form-check-input" id="cat-pools">
+                                <label class="form-check-label" for="cat-pools"><i
+                                        class="fa-solid fa-person-swimming"></i> Amazing Pools</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" name="listing[categories]" value="Camping"
+                                    class="form-check-input" id="cat-camping">
+                                <label class="form-check-label" for="cat-camping"><i
+                                        class="fa-solid fa-tent-arrow-down-to-line"></i> Camping</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" name="listing[categories]" value="Farms" class="form-check-input"
+                                    id="cat-farms">
+                                <label class="form-check-label" for="cat-farms"><i
+                                        class="fa-solid fa-building-wheat"></i> Farms</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" name="listing[categories]" value="Arctic"
+                                    class="form-check-input" id="cat-arctic">
+                                <label class="form-check-label" for="cat-arctic"><i class="fa-regular fa-snowflake"></i>
+                                    Arctic</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" name="listing[categories]" value="River Side"
+                                    class="form-check-input" id="cat-river">
+                                <label class="form-check-label" for="cat-river"><i class="fa-solid fa-water"></i> River
+                                    Side</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" name="listing[categories]" value="Domes" class="form-check-input"
+                                    id="cat-domes">
+                                <label class="form-check-label" for="cat-domes"><i class="fa-solid fa-igloo"></i>
+                                    Domes</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" name="listing[categories]" value="Boats" class="form-check-input"
+                                    id="cat-boats">
+                                <label class="form-check-label" for="cat-boats"><i class="fa-solid fa-ship"></i>
+                                    Boats</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" name="listing[categories]" value="Beach" class="form-check-input"
+                                    id="cat-beach">
+                                <label class="form-check-label" for="cat-beach"><i
+                                        class="fa-solid fa-umbrella-beach"></i> Beach</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" name="listing[categories]" value="Snow" class="form-check-input"
+                                    id="cat-snow">
+                                <label class="form-check-label" for="cat-snow"><i class="fa-solid fa-snowflake"></i>
+                                    Snow</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" name="listing[categories]" value="Forest"
+                                    class="form-check-input" id="cat-forest">
+                                <label class="form-check-label" for="cat-forest"><i class="fa-solid fa-tree"></i>
+                                    Forest</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <br>
+                    <button class="btn btn-dark add-btn">ADD</button>
+                    <br><br>
+                </form>
+            </body>
+        </div>
+    </div>
+    <script>
+        const mapToken = "<%= maptilerKey %>";
+    </script>
+    <script src="/js/newmap.js"></script>

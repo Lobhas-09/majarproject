@@ -1,0 +1,204 @@
+<% layout("/layouts/boilerplate") %>
+    <style>
+        /* Category Filter Bar */
+        #filter {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #ebebeb;
+        }
+
+        .filter {
+            text-align: center;
+            padding: 0.5rem 0.75rem;
+            opacity: 0.65;
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            min-width: 70px;
+        }
+
+        .filter:hover {
+            opacity: 1;
+            background-color: #f7f7f7;
+            transform: translateY(-2px);
+            color: inherit;
+        }
+
+        .filter.active {
+            opacity: 1;
+            border-bottom: 2px solid #222;
+            font-weight: 600;
+        }
+
+        .filter i {
+            font-size: 1.5rem;
+            display: block;
+            margin-bottom: 4px;
+            transition: color 0.3s ease;
+        }
+
+        .filter:hover i {
+            color: #fe424d;
+        }
+
+        .filter p {
+            margin: 0;
+            font-size: 0.75rem;
+            white-space: nowrap;
+        }
+
+        .tax-info {
+            display: none
+        }
+
+        .tax-toggle {
+            border: 1px solid #ddd;
+            border-radius: 1rem;
+            height: 3rem;
+            padding: 0.5rem 1rem;
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            transition: box-shadow 0.3s ease;
+        }
+
+        .tax-toggle:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Search result info */
+        .search-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.75rem 1.25rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .search-info a {
+            color: white;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: background 0.3s ease;
+        }
+
+        .search-info a:hover {
+            background: rgba(255, 255, 255, 0.35);
+        }
+    </style>
+
+    <body>
+        <!-- Category Filter Bar - hidden on mobile, shown on md+ -->
+        <div id="filter" class="d-none d-md-flex">
+            <% let active=(typeof activeCategory==='undefined' || activeCategory===null) && (typeof
+                searchQuery==='undefined' || searchQuery===null); let cats=["Trending", "Rooms" , "Iconic Cities"
+                , "Mountain" , "Castles" , "Amazing Pools" , "Camping" , "Farms" , "Arctic" , "River Side" , "Domes"
+                , "Boats" , "Beach" , "Snow" , "Forest" ]; let icons={ "Trending" : "fa-solid fa-fire-flame-curved"
+                , "Rooms" : "fa-solid fa-bed" , "Iconic Cities" : "fa-solid fa-city" , "Mountain"
+                : "fa-solid fa-mountain-city" , "Castles" : "fa-brands fa-fort-awesome" , "Amazing Pools"
+                : "fa-solid fa-person-swimming" , "Camping" : "fa-solid fa-tent-arrow-down-to-line" , "Farms"
+                : "fa-solid fa-building-wheat" , "Arctic" : "fa-regular fa-snowflake" , "River Side"
+                : "fa-solid fa-water" , "Domes" : "fa-solid fa-igloo" , "Boats" : "fa-solid fa-ship" , "Beach"
+                : "fa-solid fa-umbrella-beach" , "Snow" : "fa-solid fa-snowflake" , "Forest" : "fa-solid fa-tree" }; %>
+
+                <a href="/listings" class="filter <%= active ? 'active' : '' %>">
+                    <div><i class="fa-solid fa-border-all"></i></div>
+                    <p>All</p>
+                </a>
+
+                <% for(let cat of cats) { %>
+                    <a href="/listings/filter/<%= cat %>"
+                        class="filter <%= (typeof activeCategory !== 'undefined' && activeCategory === cat) ? 'active' : '' %>">
+                        <div><i class="<%= icons[cat] %>"></i></div>
+                        <p>
+                            <%= cat %>
+                        </p>
+                    </a>
+                    <% } %>
+
+                        <div class="tax-toggle">
+                            <div class="form-check-reverse form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault">
+                                <label class="form-check-label" for="switchCheckDefault">Display Total After
+                                    Taxes</label>
+                            </div>
+                        </div>
+        </div>
+
+        <!-- Mobile Tax toggle -->
+        <div class="d-md-none mt-2 mb-2">
+            <div class="tax-toggle" style="margin-left:0;">
+                <div class="form-check-reverse form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="switchCheckDefaultMobile">
+                    <label class="form-check-label" for="switchCheckDefaultMobile">Display Total After Taxes</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search/Filter info -->
+        <% if(typeof searchQuery !=='undefined' && searchQuery) { %>
+            <div class="search-info mt-3">
+                <span><i class="fa-solid fa-magnifying-glass"></i> Results for "<strong>
+                        <%= searchQuery %>
+                    </strong>"</span>
+                <a href="/listings"><i class="fa-solid fa-xmark"></i> Clear</a>
+            </div>
+            <% } %>
+
+                <% if(typeof activeCategory !=='undefined' && activeCategory) { %>
+                    <div class="search-info mt-3">
+                        <span><i class="fa-solid fa-filter"></i> Filtered by: <strong>
+                                <%= activeCategory %>
+                            </strong></span>
+                        <a href="/listings"><i class="fa-solid fa-xmark"></i> Show All</a>
+                    </div>
+                    <% } %>
+
+                        <div class="row row-cols-lg-3 row-cols-md-3 row-cols-sm-3 mt-3">
+                            <% for(let listing of allListings) { %>
+                                <a href="/listings/<%= listing._id %>" class="listings_link">
+                                    <div class="card cols">
+                                        <img src="<%=listing.image.url%>" class="card-img-top" alt="listings_image"
+                                            style="height: 20rem;">
+                                        <div class="card-img-overlay">Created By Lobhas</div>
+                                        <div class="card-body listing-card">
+                                            <p class="card-text">
+                                                <b>
+                                                    <%= listing.title %>
+                                                </b><br>
+                                                ₹<%= (listing.price ? Number(listing.price).toLocaleString('en-IN')
+                                                    : '0' ) %> / night
+                                                    <i class="tax-info">&nbsp; &nbsp;+18% GST</i>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </a>
+                                <% } %>
+                        </div>
+    </body>
+
+    <script>
+        let taxSwitch = document.getElementById("switchCheckDefault");
+        let taxSwitchMobile = document.getElementById("switchCheckDefaultMobile");
+        let taxInfo = document.getElementsByClassName("tax-info");
+
+        const toggleTax = () => {
+            for (let info of taxInfo) {
+                info.style.display = (info.style.display !== "inline") ? "inline" : "none";
+            }
+        };
+
+        if (taxSwitch) taxSwitch.addEventListener("click", toggleTax);
+        if (taxSwitchMobile) taxSwitchMobile.addEventListener("click", toggleTax);
+    </script>

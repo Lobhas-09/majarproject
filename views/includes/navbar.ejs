@@ -1,0 +1,132 @@
+<style>
+  .btn-search {
+    background-color: #fe424d;
+    color: #fff;
+    border-radius: 25px;
+    padding: 0 1rem 0 1rem;
+    transition: all 0.3s ease;
+  }
+
+  .btn-search:hover {
+    background-color: #d63640;
+    color: #fff;
+    transform: scale(1.05);
+  }
+
+  .btn-search i {
+    display: inline;
+    margin-right: 0.5rem;
+  }
+
+  .search-inp {
+    border-radius: 25px;
+    padding: 0.5rem 3rem 0.5rem 3rem;
+    font-size: 1rem;
+  }
+
+  /* Mobile category dropdown */
+  .category-dropdown .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    transition: background-color 0.2s ease;
+  }
+
+  .category-dropdown .dropdown-item:hover {
+    background-color: #ffe4e6;
+    color: #fe424d;
+  }
+
+  .category-dropdown .dropdown-item i {
+    width: 20px;
+    text-align: center;
+    color: #fe424d;
+  }
+
+  .category-dropdown .dropdown-menu {
+    max-height: 60vh;
+    overflow-y: auto;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  }
+</style>
+
+
+
+<nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/listings"><i class="fa-solid fa-house"></i>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup"
+      aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+
+
+        <a class="nav-link" href="/listings">Explore</a>
+
+        <!-- Category Dropdown - visible only on small screens -->
+        <li class="nav-item dropdown d-md-none">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fa-solid fa-layer-group"></i> Categories
+          </a>
+          <ul class="dropdown-menu category-dropdown">
+            <li><a class="dropdown-item" href="/listings"><i class="fa-solid fa-border-all"></i> All</a></li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li><a class="dropdown-item" href="/listings/filter/Trending"><i class="fa-solid fa-fire-flame-curved"></i>
+                Trending</a></li>
+            <li><a class="dropdown-item" href="/listings/filter/Rooms"><i class="fa-solid fa-bed"></i> Rooms</a></li>
+            <li><a class="dropdown-item" href="/listings/filter/Iconic Cities"><i class="fa-solid fa-city"></i> Iconic
+                Cities</a></li>
+            <li><a class="dropdown-item" href="/listings/filter/Mountain"><i class="fa-solid fa-mountain-city"></i>
+                Mountain</a></li>
+            <li><a class="dropdown-item" href="/listings/filter/Castles"><i class="fa-brands fa-fort-awesome"></i>
+                Castles</a></li>
+            <li><a class="dropdown-item" href="/listings/filter/Amazing Pools"><i
+                  class="fa-solid fa-person-swimming"></i> Amazing Pools</a></li>
+            <li><a class="dropdown-item" href="/listings/filter/Camping"><i
+                  class="fa-solid fa-tent-arrow-down-to-line"></i> Camping</a></li>
+            <li><a class="dropdown-item" href="/listings/filter/Farms"><i class="fa-solid fa-building-wheat"></i>
+                Farms</a></li>
+            <li><a class="dropdown-item" href="/listings/filter/Arctic"><i class="fa-regular fa-snowflake"></i>
+                Arctic</a></li>
+            <li><a class="dropdown-item" href="/listings/filter/River Side"><i class="fa-solid fa-water"></i> River
+                Side</a></li>
+            <li><a class="dropdown-item" href="/listings/filter/Domes"><i class="fa-solid fa-igloo"></i> Domes</a></li>
+            <li><a class="dropdown-item" href="/listings/filter/Boats"><i class="fa-solid fa-ship"></i> Boats</a></li>
+            <li><a class="dropdown-item" href="/listings/filter/Beach"><i class="fa-solid fa-umbrella-beach"></i>
+                Beach</a></li>
+            <li><a class="dropdown-item" href="/listings/filter/Snow"><i class="fa-solid fa-snowflake"></i> Snow</a>
+            </li>
+            <li><a class="dropdown-item" href="/listings/filter/Forest"><i class="fa-solid fa-tree"></i> Forest</a></li>
+          </ul>
+        </li>
+
+
+      </div>
+      <div class="navbar-nav ms-auto">
+        <form class="d-flex" role="search" action="/listings/search" method="GET">
+          <input class="form-control me-2 search-inp" name="q" type="search" placeholder="Search destinations"
+            aria-label="Search" />
+          <button class="btn btn-search" type="submit"><i class="fa-brands fa-sistrix"></i>Search</button>
+        </form>
+      </div>
+      <div class="navbar-nav ms-auto">
+        <a class="nav-link" href="/listings/new">Airbnb your Home</a>
+        <% if(!currUser) { %>
+          <a class="nav-link" href="/signup"><b>Sign up</b></a>
+          <a class="nav-link" href="/login"><b>login</b></a>
+          <% } %>
+
+            <% if(currUser) { %>
+              <a class="nav-link" href="/logout"><b>logout</b></a>
+              <% } %>
+      </div>
+    </div>
+  </div>
+</nav>
