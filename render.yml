@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: airbnb
+    env: node
+    buildCommand: npm install
+    startCommand: node app.js
+    plan: free
