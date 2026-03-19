@@ -1,7 +1,9 @@
-if (process.env.NODE_ENV != "production") {
-  require("dotenv").config();
-}
-console.log(process.env.Secret)
+require("dotenv").config();
+console.log("ENVIRONMENT DIAGNOSTICS:");
+console.log("- NODE_ENV:", process.env.NODE_ENV);
+console.log("- CLOUD_NAME:", process.env.CLOUD_NAME ? "✅ Detected" : "❌ Missing");
+console.log("- CLOUD_API_KEY:", process.env.CLOUD_API_KEY ? "✅ Detected" : "❌ Missing");
+console.log("- CLOUD_API_SECRET:", process.env.CLOUD_API_SECRET ? "✅ Detected (Masked)" : "❌ Missing");
 
 
 
