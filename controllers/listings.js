@@ -78,26 +78,31 @@ module.exports.CreateListings = async (req, res, next) => {
     }
 
     const location = req.body.listing.location;
+    let coordinates;
 
-    const geoData = await maptilerClient.geocoding.forward(location, {
-      limit: 1,
-      language: ["en"],
-    });
+    try {
+      const geoData = await maptilerClient.geocoding.forward(location, {
+        limit: 1,
+        language: ["en"],
+      });
 
-    // ✅ Check if geocoding returned results
-    if (!geoData.features.length) {
-      req.flash("error", "Location not found, please try again");
-      return res.redirect("/listings/new");  // ✅ return stops here
+      if (!geoData.features.length) {
+        req.flash("error", "Location not found, please try again");
+        return res.redirect("/listings/new");
+      }
+
+      coordinates = geoData.features[0].geometry.coordinates;
+    } catch (geoErr) {
+      console.error("Geocoding Error:", geoErr);
+      req.flash("error", "Map service is currently unavailable. Please try again later.");
+      return res.redirect("/listings/new");
     }
-
-    const coordinates = geoData.features[0].geometry.coordinates;
 
     let url, filename;
     if (req.file) {
       url = req.file.path;
       filename = req.file.filename;
     } else {
-      // Provide a default image if no file is uploaded
       url = "https://images.unsplash.com/photo-1571896349842-33c89424de2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8aG90ZWxzfGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60";
       filename = "default_image";
     }
@@ -112,10 +117,12 @@ module.exports.CreateListings = async (req, res, next) => {
 
     await newListing.save();
     req.flash("success", "New Listing Created");
-    return res.redirect("/listings");  // ✅ return stops here
+    return res.redirect("/listings");
 
   } catch (err) {
-    next(err);  // ✅ Pass error to error handler, don't res.render here
+    console.error("Creation Error:", err);
+    req.flash("error", err.message);
+    res.redirect("/listings/new");
   }
 };
 module.exports.EditListings = async (req, res) => {
@@ -134,33 +141,39 @@ module.exports.EditListings = async (req, res) => {
   res.render("listings/edit.ejs", { listing, originalImageUrl });
 }
 
-module.exports.UpdateListings = (async (req, res) => {
-  let { id } = req.params;
+module.exports.UpdateListings = async (req, res) => {
+  try {
+    let { id } = req.params;
 
-  // Ensure categories is always an array
-  if (!req.body.listing.categories) {
-    req.body.listing.categories = [];
-  } else if (typeof req.body.listing.categories === "string") {
-    req.body.listing.categories = [req.body.listing.categories];
+    // Ensure categories is always an array
+    if (!req.body.listing.categories) {
+      req.body.listing.categories = [];
+    } else if (typeof req.body.listing.categories === "string") {
+      req.body.listing.categories = [req.body.listing.categories];
+    }
+
+    let ListingToUpdate = await Listing.findByIdAndUpdate(id, { ...req.body.listing });
+
+    if (!ListingToUpdate) {
+      req.flash("error", "Listing you requested to update does not exist!");
+      return res.redirect("/listings");
+    }
+
+    if (typeof req.file !== "undefined") {
+      let url = req.file.path;
+      let filename = req.file.filename;
+      ListingToUpdate.image = { url, filename };
+      await ListingToUpdate.save();
+    }
+
+    req.flash("success", "Listing Updated");
+    res.redirect(`/listings/${id}`);
+  } catch (err) {
+    console.error("Update Error:", err);
+    req.flash("error", err.message);
+    res.redirect(`/listings/${req.params.id}/edit`);
   }
-
-  let Listings = await Listing.findByIdAndUpdate(id, { ...req.body.listing });
-
-  if (!Listings) {
-    req.flash("error", "Listing you requested to update does not exist!");
-    return res.redirect("/listings");
-  }
-
-  if (typeof req.file !== "undefined") {
-    let url = req.file.path;
-    let filename = req.file.filename;
-    Listings.image = { url, filename }
-    await Listings.save()
-  }
-
-  req.flash("success", " Listings Updated")
-  res.redirect(`/listings/${id}`);
-})
+};
 
 module.exports.destroyListings = async (req, res) => {
   let { id } = req.params;

@@ -85,9 +85,9 @@ const sessionOptins = {
 
 
 
-// app.get("/", (req, res) => {
-//   res.send("hii im a lobhas");
-// });
+app.get("/", (req, res) => {
+  res.redirect("/listings");
+});
 
 
 

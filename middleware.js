@@ -40,11 +40,19 @@ module.exports.validationListings = (req, res, next) => {
   let { error } = listingSchema.validate(req.body);
   if (error) {
     let errmess = error.details.map((el) => el.message).join(",")
-    throw new ExpressError(400, errmess)
+    req.flash("error", errmess);
+
+    // Dynamic redirect based on the route
+    if (req.method === "POST") {
+      return res.redirect("/listings/new");
+    } else if (req.params.id) {
+      return res.redirect(`/listings/${req.params.id}/edit`);
+    } else {
+      return res.redirect("/listings");
+    }
   } else {
     next()
   }
-  //  if(!req.body.listing)
 }
 
 module.exports.validateReview = (req, res, next) => {
