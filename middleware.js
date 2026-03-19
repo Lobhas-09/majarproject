@@ -74,9 +74,11 @@ module.exports.handleUpload = (upload) => {
   return (req, res, next) => {
     upload(req, res, (err) => {
       console.log("MULTER DEBUG: req.file =", req.file);
+      console.log("MULTER DEBUG: req.body =", req.body);
       if (err) {
-        console.error("Upload Error:", err);
-        req.flash("error", "Image upload failed: " + err.message);
+        console.error("Upload Error Details:", err);
+        const errMsg = err.message || (typeof err === "string" ? err : JSON.stringify(err)) || "Unknown upload error";
+        req.flash("error", "Image upload failed: " + errMsg);
         if (req.method === "POST") {
           return res.redirect("/listings/new");
         } else {

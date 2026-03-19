@@ -103,6 +103,7 @@ module.exports.CreateListings = async (req, res, next) => {
       url = req.file.path;
       filename = req.file.filename;
     } else {
+      console.warn("CREATE LISTING DEBUG: No req.file found, using default image. Check if Cloudinary credentials are correct.");
       url = "https://images.unsplash.com/photo-1571896349842-33c89424de2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8aG90ZWxzfGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60";
       filename = "default_image";
     }
