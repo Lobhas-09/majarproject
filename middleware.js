@@ -73,6 +73,7 @@ module.exports.isReviewAuthor = async (req, res, next) => {
 module.exports.handleUpload = (upload) => {
   return (req, res, next) => {
     upload(req, res, (err) => {
+      console.log("MULTER DEBUG: req.file =", req.file);
       if (err) {
         console.error("Upload Error:", err);
         req.flash("error", "Image upload failed: " + err.message);

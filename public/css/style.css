@@ -142,7 +142,16 @@ body {
 /* show image */
 
 .show-image {
-    height: 30vh
+    height: 30vh;
+    border-radius: 1rem !important;
+}
+
+.edit-image-preview {
+    width: 250px;
+    height: auto;
+    border-radius: 0.5rem;
+    margin-top: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .btns {
