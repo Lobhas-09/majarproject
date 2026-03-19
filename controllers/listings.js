@@ -121,20 +121,20 @@ module.exports.CreateListings = async (req, res, next) => {
 module.exports.EditListings = async (req, res) => {
   let { id } = req.params;
   const listing = await Listing.findById(id);
-  //  if(!listing){
-  //       req.flash("error", "Listings you requested for does not exist")
-  //      return  res.redirect("/listings")
-  // }
+  if (!listing) {
+    req.flash("error", "Listing you requested for does not exist!");
+    return res.redirect("/listings");
+  }
 
+  let originalImageUrl = listing.image?.url || "";
+  if (originalImageUrl) {
+    originalImageUrl = originalImageUrl.replace("/upload", "/upload/h_300,w_250");
+  }
 
-  let originalImageUrl = listing.image.url;
-  originalImageUrl = originalImageUrl.replace("/upload", "/upload/h_300,w_250")
   res.render("listings/edit.ejs", { listing, originalImageUrl });
 }
 
 module.exports.UpdateListings = (async (req, res) => {
-
-
   let { id } = req.params;
 
   // Ensure categories is always an array
@@ -146,16 +146,17 @@ module.exports.UpdateListings = (async (req, res) => {
 
   let Listings = await Listing.findByIdAndUpdate(id, { ...req.body.listing });
 
-  if (typeof req.file !== "undefined") {
+  if (!Listings) {
+    req.flash("error", "Listing you requested to update does not exist!");
+    return res.redirect("/listings");
+  }
 
+  if (typeof req.file !== "undefined") {
     let url = req.file.path;
     let filename = req.file.filename;
     Listings.image = { url, filename }
     await Listings.save()
-
   }
-
-
 
   req.flash("success", " Listings Updated")
   res.redirect(`/listings/${id}`);
