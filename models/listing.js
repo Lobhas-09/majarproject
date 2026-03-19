@@ -2,21 +2,24 @@ const mongoose = require("mongoose");
 const review = require("./review");
 const Schema = mongoose.Schema;
 
-const listingSchema = new Schema ({
-    title : {
-      type :   String,
-      require : true,
-    },
-    description : String,
-    image :{
-      url : String,
-      filename : String,
-      
-    },
-    price : Number,
-    location : String,
-    country : String,
-    // ✅ Geometry field added for Geocoding
+const listingSchema = new Schema({
+  title: {
+    type: String,
+    required: true,
+  },
+  description: String,
+  image: {
+    url: String,
+    filename: String,
+  },
+  categories: {
+    type: [String],
+    default: []
+  },
+  price: Number,
+  location: String,
+  country: String,
+  // ✅ Geometry field added for Geocoding
   geometry: {
     type: {
       type: String,
@@ -28,27 +31,27 @@ const listingSchema = new Schema ({
       required: true,
     },
   },
-    reviews : [
-      {
-        type : Schema.Types.ObjectId,
-        ref : "Review"
+  reviews: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Review"
 
-      }
-
-    ],
-    owner : {
-        type : Schema.Types.ObjectId,
-        ref: "User"
     }
+
+  ],
+  owner: {
+    type: Schema.Types.ObjectId,
+    ref: "User"
+  }
 });
 
-listingSchema.post("findOneAndDelete" , async (listing) => {
-  if(listing){
-       await review.deleteMany({_id : {$in : listing.reviews}})
+listingSchema.post("findOneAndDelete", async (listing) => {
+  if (listing) {
+    await review.deleteMany({ _id: { $in: listing.reviews } })
 
   }
 
 })
 
-const Listing = mongoose.model("Listing" , listingSchema);
+const Listing = mongoose.model("Listing", listingSchema);
 module.exports = Listing; 

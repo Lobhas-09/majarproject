@@ -4,7 +4,7 @@ const router = express.Router();
 const wrapAsync = require("../utils/wrapAsync.js")
 
 const Listing = require("../models/listing.js");
-const { isLoggedIn, isOwner, validationListings } = require("../middleware.js")
+const { isLoggedIn, isOwner, validationListings, handleUpload } = require("../middleware.js")
 const ListinngController = require("../controllers/listings.js");
 const multer = require('multer');
 
@@ -13,7 +13,7 @@ const upload = multer({ storage })
 
 router.route("/")
   .get(wrapAsync(ListinngController.index))
-  .post(isLoggedIn, upload.single('listing[image]'), validationListings, wrapAsync(ListinngController.CreateListings))
+  .post(isLoggedIn, handleUpload(upload.single('listing[image]')), validationListings, wrapAsync(ListinngController.CreateListings))
 
 
 
@@ -26,7 +26,7 @@ router.get("/filter/:category", wrapAsync(ListinngController.filterByCategory));
 
 router.route("/:id")
   .get(wrapAsync(ListinngController.ShowListings))
-  .put(isLoggedIn, isOwner, upload.single('listing[image]'), validationListings, wrapAsync(ListinngController.UpdateListings))
+  .put(isLoggedIn, isOwner, handleUpload(upload.single('listing[image]')), validationListings, wrapAsync(ListinngController.UpdateListings))
   .delete(isOwner, isLoggedIn, wrapAsync(ListinngController.destroyListings))
 
 

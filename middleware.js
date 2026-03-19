@@ -4,9 +4,6 @@ const { listingSchema, reviewSchema } = require("./Schema.js");
 const Review = require("./models/review")
 
 module.exports.isLoggedIn = (req, res, next) => {
-
-
-  // console.log(req.path , ".." , req.originalUrl)    
   if (!req.isAuthenticated()) {
     req.session.redirectUrl = req.originalUrl;
     req.flash("error", "you must be logged in to create listings")
@@ -19,9 +16,9 @@ module.exports.saveRedirectUrl = (req, res, next) => {
   if (req.session.redirectUrl) {
     res.locals.redirectUrl = req.session.redirectUrl;
   }
-
   next();
 }
+
 module.exports.isOwner = async (req, res, next) => {
   let { id } = req.params;
   let listing = await Listing.findById(id);
@@ -41,8 +38,6 @@ module.exports.validationListings = (req, res, next) => {
   if (error) {
     let errmess = error.details.map((el) => el.message).join(",")
     req.flash("error", errmess);
-
-    // Dynamic redirect based on the route
     if (req.method === "POST") {
       return res.redirect("/listings/new");
     } else if (req.params.id) {
@@ -63,7 +58,6 @@ module.exports.validateReview = (req, res, next) => {
   } else {
     next()
   }
-  //  if(!req.body.listing)
 }
 
 module.exports.isReviewAuthor = async (req, res, next) => {
@@ -75,3 +69,20 @@ module.exports.isReviewAuthor = async (req, res, next) => {
   }
   next()
 }
+
+module.exports.handleUpload = (upload) => {
+  return (req, res, next) => {
+    upload(req, res, (err) => {
+      if (err) {
+        console.error("Upload Error:", err);
+        req.flash("error", "Image upload failed: " + err.message);
+        if (req.method === "POST") {
+          return res.redirect("/listings/new");
+        } else {
+          return res.redirect(`/listings/${req.params.id}/edit`);
+        }
+      }
+      next();
+    });
+  };
+};
