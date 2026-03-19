@@ -197,3 +197,30 @@ body {
         max-width: 100%;
     }
 }
+
+/* Starability Sizing */
+.starability-result {
+    transform: scale(1.4);
+    transform-origin: left;
+    margin-bottom: 2rem !important;
+}
+
+.starability-heartbeat {
+    transform: scale(1.1);
+    transform-origin: left;
+}
+
+@media (max-width: 575.98px) {
+    .btns {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .btns .btn,
+    .btns form,
+    .btns form button {
+        width: 100% !important;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+}
