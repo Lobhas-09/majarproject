@@ -1,7 +1,4 @@
-require('dotenv').config() // or import 'dotenv/config' if you're using ES6
-
-
-if(process.env.Node_ENV != "production"){
+if (process.env.NODE_ENV != "production") {
   require("dotenv").config();
 }
 console.log(process.env.Secret)
@@ -63,16 +60,16 @@ app.use(express.static(path.join(__dirname, "/public")));
 
 
 const store = MongoStore.create({
-    mongoUrl: dbUrl,
-   crypto : {
-      secret: process.env.SECRET,
-   },
-   touchAfter : 24 * 3600,
-  });
+  mongoUrl: dbUrl,
+  crypto: {
+    secret: process.env.SECRET,
+  },
+  touchAfter: 24 * 3600,
+});
 
-  store.on("error" , () => {
-    console.log("ERROR IN SESSION STORE" , err);
-  });
+store.on("error", () => {
+  console.log("ERROR IN SESSION STORE", err);
+});
 
 const sessionOptins = {
   store,

@@ -2,7 +2,7 @@ const Listing = require("../models/listing")
 
 const maptilerClient = require("@maptiler/client");
 
-maptilerClient.config.apiKey = 'AFkjcVXlvq01IiFF0LnL';
+maptilerClient.config.apiKey = process.env.MAPTILER_API_KEY;
 
 
 // in an async function, or as a 'thenable':
@@ -92,8 +92,15 @@ module.exports.CreateListings = async (req, res, next) => {
 
     const coordinates = geoData.features[0].geometry.coordinates;
 
-    let url = req.file.path;
-    let filename = req.file.filename;
+    let url, filename;
+    if (req.file) {
+      url = req.file.path;
+      filename = req.file.filename;
+    } else {
+      // Provide a default image if no file is uploaded
+      url = "https://images.unsplash.com/photo-1571896349842-33c89424de2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8aG90ZWxzfGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60";
+      filename = "default_image";
+    }
 
     const newListing = new Listing(req.body.listing);
     newListing.owner = req.user._id;
